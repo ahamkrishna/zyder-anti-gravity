@@ -1,0 +1,64 @@
+:root {
+    /* Swiss Design Palette */
+    --color-bg: #e0e0e0;
+    --color-text: #1a1a1a;
+    --color-accent: #000000;
+    --color-subtle: #888888;
+
+    /* Typography */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Inter', sans-serif;
+    /* Keep it uniform for Swiss style */
+
+    /* Spacing */
+    --spacing-container: 1600px;
+    --spacing-section: 100vh;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    /* Handled by Lenis/ScrollControls */
+}
+
+/* Typography Scale */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 300;
+    /* Thin, elegant */
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    /* Let clicks pass through to UI if needed, or handle in canvas */
+}
+
+.ui-layer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
