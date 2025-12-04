@@ -31,8 +31,8 @@ function MatteCard({ data, position }: { data: any, position: [number, number, n
     return (
         <group ref={meshRef} position={position}>
             <Float speed={2} rotationIntensity={0.02} floatIntensity={0.1}>
-                {/* Matte Card Body */}
-                <RoundedBox args={[3.5, 2.2, 0.1]} radius={0.1} smoothness={4}>
+                {/* Matte Card Body - Compact Size */}
+                <RoundedBox args={[3.0, 1.8, 0.1]} radius={0.1} smoothness={4}>
                     <meshStandardMaterial
                         color="#1a1a1a"
                         roughness={0.7}
@@ -40,15 +40,15 @@ function MatteCard({ data, position }: { data: any, position: [number, number, n
                     />
                 </RoundedBox>
 
-                {/* Minimalist UI */}
+                {/* Minimalist UI - Refined */}
                 <Html transform distanceFactor={2.5} style={{ pointerEvents: 'auto' }} position={[0, 0, 0.06]}>
                     <div
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                         style={{
-                            width: '350px',
-                            height: '220px',
-                            padding: '30px',
+                            width: '280px', // Reduced width
+                            height: '170px', // Reduced height
+                            padding: '20px', // Tighter padding
                             color: '#ffffff',
                             fontFamily: 'Inter, sans-serif',
                             display: 'flex',
@@ -60,20 +60,20 @@ function MatteCard({ data, position }: { data: any, position: [number, number, n
                         }}
                     >
                         {/* Quote */}
-                        <div style={{ fontSize: '1.1rem', lineHeight: '1.5', fontWeight: 300, opacity: 0.9 }}>
+                        <div style={{ fontSize: '0.95rem', lineHeight: '1.4', fontWeight: 300, opacity: 0.9 }}>
                             "{data.text}"
                         </div>
 
                         {/* Author Info */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px' }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
                                 {data.name.charAt(0)}
                             </div>
                             <div>
-                                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{data.name}</div>
-                                <div style={{ fontSize: '0.75rem', opacity: 0.5 }}>{data.role} • {data.location}</div>
+                                <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{data.name}</div>
+                                <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{data.role}</div>
                             </div>
-                            <div style={{ marginLeft: 'auto', color: '#ffd700', fontSize: '0.9rem' }}>
+                            <div style={{ marginLeft: 'auto', color: '#ffd700', fontSize: '0.8rem' }}>
                                 {'★'.repeat(data.rating)}
                             </div>
                         </div>
@@ -87,9 +87,9 @@ function MatteCard({ data, position }: { data: any, position: [number, number, n
 function Carousel() {
     return (
         <group position={[0, 0, 0]}>
-            <MatteCard data={TESTIMONIALS[0]} position={[-4, 0, 0]} />
+            <MatteCard data={TESTIMONIALS[0]} position={[-3.5, 0, 0]} />
             <MatteCard data={TESTIMONIALS[1]} position={[0, 0, 0.5]} />
-            <MatteCard data={TESTIMONIALS[2]} position={[4, 0, 0]} />
+            <MatteCard data={TESTIMONIALS[2]} position={[3.5, 0, 0]} />
         </group>
     );
 }

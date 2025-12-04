@@ -1,116 +1,76 @@
 'use client';
 
 import React from 'react';
-import { PerspectiveCamera, Environment, OrbitControls, Html } from '@react-three/drei';
-
-// --- Components ---
-
-function NeatCard({ position, label, value, status, color = '#007AFF' }: { position: [number, number, number], label: string, value: string, status: string, color?: string }) {
-    return (
-        <group position={position}>
-            <Html position={[0, 0, 0]} transform style={{ pointerEvents: 'none' }} zIndexRange={[100, 0]}>
-                <div style={{
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(40px)',
-                    WebkitBackdropFilter: 'blur(40px)',
-                    border: '1px solid rgba(255, 255, 255, 0.95)',
-                    borderRadius: '16px',
-                    padding: '20px',
-                    width: '180px',
-                    height: '120px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    boxShadow: '0 15px 30px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.02)',
-                    fontFamily: '"Inter", sans-serif',
-                    color: '#1d1d1f'
-                }}>
-                    {/* Label */}
-                    <div style={{
-                        fontSize: '0.6rem',
-                        color: '#86868b',
-                        fontWeight: 600,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.1em'
-                    }}>
-                        {label}
-                    </div>
-
-                    {/* Value */}
-                    <div style={{
-                        fontSize: '2.2rem',
-                        fontWeight: 700,
-                        lineHeight: '1',
-                        letterSpacing: '-0.03em',
-                        color: '#000000'
-                    }}>
-                        {value}
-                    </div>
-
-                    {/* Status Footer */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <div style={{
-                            width: '6px',
-                            height: '6px',
-                            borderRadius: '50%',
-                            background: color
-                        }}></div>
-                        <div style={{
-                            fontSize: '0.7rem',
-                            color: '#424245',
-                            fontWeight: 500
-                        }}>
-                            {status}
-                        </div>
-                    </div>
-                </div>
-            </Html>
-        </group>
-    );
-}
-
-// --- Main Scene ---
+import { PerspectiveCamera, Environment, OrbitControls } from '@react-three/drei';
+import NeuralCore from './NeuralCore';
+import GlassCard from './GlassCard';
 
 export default function DashboardScene() {
     return (
         <>
-            <color attach="background" args={['#f5f5f7']} />
-            <fog attach="fog" args={['#f5f5f7', 8, 25]} />
+            <color attach="background" args={['#050505']} />
+            <fog attach="fog" args={['#050505', 10, 40]} />
 
-            <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={35} />
-            <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} maxPolarAngle={Math.PI / 1.8} minPolarAngle={Math.PI / 2.2} />
+            <PerspectiveCamera makeDefault position={[0, 0, 12]} fov={45} />
+            <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                autoRotate={false}
+                maxPolarAngle={Math.PI / 1.5}
+                minPolarAngle={Math.PI / 3}
+            />
 
             {/* Lighting */}
-            <Environment preset="city" environmentIntensity={0.5} blur={1} />
-            <ambientLight intensity={0.9} />
-            <directionalLight position={[5, 10, 5]} intensity={0.8} color="#ffffff" />
-            <directionalLight position={[-5, 5, 5]} intensity={0.5} color="#eefeff" />
+            <ambientLight intensity={0.2} />
+            <pointLight position={[10, 10, 10]} intensity={1} color="#00f0ff" />
+            <pointLight position={[-10, -10, 10]} intensity={0.5} color="#ffffff" />
 
-            {/* Three Neat Cards - Smaller & Spaced Out */}
+            {/* The Neural Core */}
+            <NeuralCore />
+
+            {/* Floating Data Cards - Distributed in 3D Space */}
             <group position={[0, 0, 0]}>
-                <NeatCard
-                    position={[-3.5, 0, 0]}
-                    label="Efficiency"
-                    value="98%"
-                    status="Target Met"
-                    color="#34C759"
+
+                {/* Top Left - Highlighted Metric */}
+                <GlassCard
+                    position={[-5.5, 2.5, 0]}
+                    label="Active Drones"
+                    value="8,412"
+                    subtext="+124 new connections"
+                    align="right"
+                    highlight={true}
                 />
-                <NeatCard
-                    position={[0, 0, 0]}
-                    label="Active Units"
-                    value="2,415"
-                    status="Online"
-                    color="#007AFF"
+
+                {/* Bottom Left - Standard Metric */}
+                <GlassCard
+                    position={[-4, -2, 0]}
+                    label="Neural Load"
+                    value="42%"
+                    subtext="Processing optimal routes"
+                    align="right"
                 />
-                <NeatCard
-                    position={[3.5, 0, 0]}
+
+                {/* Top Right - Highlighted Metric */}
+                <GlassCard
+                    position={[5.5, 2.5, 0]}
+                    label="Total Revenue"
+                    value="$4.2M"
+                    subtext="12.5% vs last month"
+                    align="left"
+                    highlight={true}
+                />
+
+                {/* Bottom Right - Standard Metric */}
+                <GlassCard
+                    position={[4, -2, 0]}
                     label="System Status"
-                    value="100%"
-                    status="Optimal"
-                    color="#5856D6"
+                    value="ONLINE"
+                    subtext="99.99% Uptime"
+                    align="left"
                 />
             </group>
 
+            <Environment preset="city" />
         </>
     );
 }

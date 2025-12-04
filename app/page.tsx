@@ -8,19 +8,24 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const OpeningScene = dynamic(() => import('@/components/canvas/OpeningScene'), { ssr: false });
 const DeliveryScene = dynamic(() => import('@/components/canvas/DeliveryScene'), { ssr: false });
+const FleetScene = dynamic(() => import('@/components/canvas/FleetScene'), { ssr: false });
 const NetworkScene = dynamic(() => import('@/components/canvas/NetworkScene'), { ssr: false });
 const DashboardScene = dynamic(() => import('@/components/canvas/DashboardScene'), { ssr: false });
+const AIScene = dynamic(() => import('@/components/canvas/AIScene'), { ssr: false });
 const TestimonialScene = dynamic(() => import('@/components/canvas/TestimonialScene'), { ssr: false });
 const ClosingScene = dynamic(() => import('@/components/canvas/ClosingScene'), { ssr: false });
+import ScenePreloader from '@/components/canvas/ScenePreloader';
 
-const SCENES = ['opening', 'delivery', 'hiring', 'dashboard', 'testimonials', 'closing'] as const;
+const SCENES = ['opening', 'delivery', 'fleet', 'hiring', 'dashboard', 'ai_core', 'testimonials', 'closing'] as const;
 type SceneType = typeof SCENES[number];
 
 const SCENE_LABELS: Record<SceneType, string> = {
     opening: 'The Box',
     delivery: 'The Drone',
+    fleet: 'The Fleet',
     hiring: 'The Network',
     dashboard: 'The Data',
+    ai_core: 'The Brain',
     testimonials: 'The Trust',
     closing: 'The Horizon'
 };
@@ -30,11 +35,16 @@ export default function Page() {
     const [isScrolling, setIsScrolling] = useState(false);
     const [hoveredDot, setHoveredDot] = useState<number | null>(null);
 
+    const scene = SCENES[sceneIndex];
+
     const handleScroll = useCallback((e: WheelEvent) => {
         if (isScrolling) return;
 
         // Disable global scroll navigation for 'delivery' scene to allow ScrollControls to work
         if (SCENES[sceneIndex] === 'delivery') return;
+
+        // Scroll Threshold: Require deliberate movement
+        if (Math.abs(e.deltaY) < 30) return;
 
         if (e.deltaY > 0) {
             // Scroll Down -> Next Scene
@@ -58,8 +68,6 @@ export default function Page() {
         return () => window.removeEventListener('wheel', handleScroll);
     }, [handleScroll]);
 
-    const scene = SCENES[sceneIndex];
-
     return (
         <main style={{ width: '100vw', height: '100vh', background: '#000', overflow: 'hidden' }}>
             <AnimatePresence mode="wait">
@@ -68,7 +76,7 @@ export default function Page() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 1, ease: "easeInOut" }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
                     style={{ width: '100%', height: '100%', position: 'absolute' }}
                 >
                     <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 10], fov: 50 }}>
@@ -78,8 +86,10 @@ export default function Page() {
                                 onComplete={() => setSceneIndex(prev => prev + 1)}
                                 onBackward={() => setSceneIndex(prev => prev - 1)}
                             />}
+                            {scene === 'fleet' && <FleetScene />}
                             {scene === 'hiring' && <NetworkScene onComplete={() => { }} />}
                             {scene === 'dashboard' && <DashboardScene />}
+                            {scene === 'ai_core' && <AIScene />}
                             {scene === 'testimonials' && <TestimonialScene />}
                             {scene === 'closing' && <ClosingScene />}
                         </Suspense>
@@ -94,37 +104,7 @@ export default function Page() {
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em' }}>ZYDER</h1>
             </div>
 
-            {/* Scene 4 UI Overlay (Only visible in 'dashboard' state) */}
-            {scene === 'dashboard' && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                >
-                    {/* Top Left: Revenue */}
-                    <div style={{ position: 'absolute', top: '40px', left: '40px', fontFamily: 'Inter, sans-serif', color: '#1a1a1a' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.05em', opacity: 0.6, marginBottom: '4px' }}>TOTAL REVENUE</div>
-                        <div style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em' }}>$4.2M</div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#00cc66', marginTop: '4px' }}>+12.5%</div>
-                    </div>
-
-                    {/* Top Right: Active Drones */}
-                    <div style={{ position: 'absolute', top: '40px', right: '40px', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', textAlign: 'right' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.05em', opacity: 0.6, marginBottom: '4px' }}>ACTIVE DRONES</div>
-                        <div style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em' }}>842</div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#00cc66', marginTop: '4px' }}>ONLINE</div>
-                    </div>
-
-                    {/* Bottom Center: System Status */}
-                    <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans-serif', color: '#1a1a1a', textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', opacity: 0.5, marginBottom: '8px' }}>SYSTEM STATUS</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.05)', padding: '8px 16px', borderRadius: '20px' }}>
-                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00cc66' }}></div>
-                            <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>ALL SYSTEMS OPERATIONAL</div>
-                        </div>
-                    </div>
-                </motion.div>
-            )}
+            {/* Scene 4 UI Overlay (Removed to avoid duplication with 3D scene) */}
 
             {/* Navigation Dots */}
             <div style={{
@@ -189,6 +169,9 @@ export default function Page() {
                     </div>
                 ))}
             </div>
+
+            {/* Smart Preloader (Global) */}
+            <ScenePreloader />
         </main>
     );
 }
